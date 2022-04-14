@@ -1,4 +1,7 @@
 .env
+.envrc
+.vscode/settings.json
+*-lock*
 
 # Logs
 logs
