@@ -1,6 +1,7 @@
 .env
-.vscode
-pnpm-lock.yaml
+.envrc
+.vscode/settings.json
+*-lock*
 
 # Logs
 logs
