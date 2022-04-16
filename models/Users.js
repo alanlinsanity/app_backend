@@ -1,15 +1,17 @@
 const bcrypt = require("bcrypt");
 const { Schema, model } = require("mongoose");
 
-const dbga = require("debug")("app:auth");
-
-const hashPass = (input) => {
-  const salt = bcrypt.genSaltSync(rounds);
-  const hash = bcrypt.hashSync(input, salt);
-  return hash;
-};
-
+// const dbga = require("debug")("app:auth");
 const rounds = 10;
+
+const maxLoginAttempts = 5;
+const lockTime = 2 * 60 * 60 * 1000;
+
+// const hashPass = (input) => {
+//   const salt = bcrypt.genSaltSync(rounds);
+//   const hash = bcrypt.hashSync(input, salt);
+//   return hash;
+// };
 
 const userSchema = new Schema({
   username: {
@@ -19,7 +21,7 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    set: hashPass,
+    // set: hashPass,
     required: true,
   },
   accountType: {
@@ -28,8 +30,25 @@ const userSchema = new Schema({
     required: true,
   },
   listings: {
-    required: false,
+    type: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Listing",
+      },
+    ],
   },
+  favourites: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Listing",
+    },
+  ],
+  loginAttempts: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  lockUntil: Number,
 });
 
 // userSchema.methods.comparePassword = function (password, cb) {
@@ -43,16 +62,68 @@ const userSchema = new Schema({
 userSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };
+userSchema.methods.incLoginAttempts = function () {
+  // if user is locked and timer expired
+  if (this.lockUntil && this.lockUntil < Date.now() / 1000) {
+    // reset lock
+    return this.update({
+      $set: { loginAttempts: 1 },
+      $unset: { lockUntil: 1 },
+    });
+  }
 
-// userSchema.pre("save", function (next) {
-//   if (!this.isModified("password")) return next();
-//   const salt = bcrypt.genSaltSync(rounds);
-//   bcrypt.hash(this.password, salt, (err, hash) => {
-//     if (err) return next(err);
-//     this.password = hash;
-//     next();
-//   });
-// });
+  const updates = {
+    $inc: { loginAttempts: 1 },
+  };
+  if (this.loginAttempts + 1 >= maxLoginAttempts && !this.isLocked) {
+    updates.$set = { lockUntil: Date.now() / 1000 + lockTime };
+  }
+  return this.update(updates, cb);
+};
+
+userSchema.virtual("isLocked").get(function () {
+  // check for a future lockUntil timestamp
+  return !!(this.lockUntil && this.lockUntil > Date.now());
+});
+
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password")) return next();
+  const salt = bcrypt.genSaltSync(rounds);
+  const hash = bcrypt.hashSync(this.password, salt);
+  this.password = hash;
+  next();
+});
+
+const reasons = (userSchema.statics.failedLogin = {
+  NOT_FOUND: 0,
+  PASSWORD_INCORRECT: 1,
+  MAX_ATTEMPTS: 2,
+});
+
+userSchema.statics.getAuthenticated = async function ({ username, password }) {
+  const user = await this.findOne({ username });
+  let reason;
+  if (!user) return null;
+
+  if (user.isLocked) {
+    reason = reasons.MAX_ATTEMPTS;
+    user.incLoginAttempts();
+    throw new Error("User is locked");
+  }
+
+  const isMatch = await user.comparePassword(password);
+  if (isMatch) {
+    if (!user.loginAttempts && !user.lockUntil) return user;
+    await user.update({
+      $set: { loginAttempts: 0 },
+      $unset: { lockUntil: 1 },
+    });
+    return user;
+  }
+
+  reason = reasons.PASSWORD_INCORRECT;
+  user.incLoginAttempts();
+};
 
 const User = model("User", userSchema);
 

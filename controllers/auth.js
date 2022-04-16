@@ -84,28 +84,30 @@ router.get("/seed", async (req, res) => {
 //   res.json({ token, refreshToken });
 // });
 
+//*
+router.get("/check", async (req, res) => {
+  const users = await User.find();
+  dbga("check", users);
+
+  res.send(users);
+});
+
+//*
 router.post("/login", async (req, res) => {
-  dbga("req.body.username", req.body.username);
-  dbga("req.body.password", req.body.password);
-
-  const user = await User.findOne({ username: req.body.username });
-
-  if (!user) return res.status(401).json({ message: "User not found" });
-
-  const isMatch = await user.comparePassword(req.body.password);
-
-  if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-
-  const token = generateAccessToken({
-    usr: user.username,
-  });
-
-  const [refreshToken, fgp] = generateRefreshToken();
-
-  res
-    .status(200)
-    .cookie("__Secure-fgp=", fgp, { httpOnly: true, secure: true })
-    .json({ token, refreshToken });
+  const { username, password } = req.body;
+  try {
+    const user = await User.getAuthenticated(req.body);
+    if (!user) res.status(401).json({ msg: "failed to login" });
+    const { username, accountType } = user;
+    const token = generateAccessToken({ username, accountType });
+    const [refreshToken, fgp] = generateRefreshToken();
+    res
+      .status(200)
+      .cookie("__Secure-fgp", fgp, { httpOnly: true, secure: true })
+      .json({ token, refreshToken });
+  } catch (err) {
+    res.status(429).json({ message: err.message });
+  }
 });
 
 //* Create Route
@@ -125,7 +127,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/test", authenticateToken, async (req, res) => {
-  res.send("we good");
+  res.json({ msg: "we good" });
 });
 
 // //* Delete Route

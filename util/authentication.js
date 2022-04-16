@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const { accessSecret, refreshSecret } = require("./envhelper");
 
 // const hash = ({}) => crypto.createHash("sha256").update("password").digest("hex");
 
 function generateAccessToken(userInfo) {
-  return jwt.sign(userInfo, process.env.ACCESS_TOKEN_SECRET, {
+  return jwt.sign(userInfo, accessSecret, {
     expiresIn: "15m",
   });
 }
@@ -15,7 +16,7 @@ function authenticateToken(req, res, next) {
 
   if (token == undefined) return res.sendStatus(401);
 
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+  jwt.verify(token, accessSecret, (err, user) => {
     console.log(err);
     if (err) return res.sendStatus(403);
     req.user = user;
@@ -27,7 +28,7 @@ function generateRefreshToken() {
   const buf = crypto.randomBytes(64);
   const fgp = buf.toString("hex");
 
-  const refreshToken = jwt.sign({ fgp }, process.env.REFRESH_TOKEN_SECRET, {
+  const refreshToken = jwt.sign({ fgp }, refreshSecret, {
     expiresIn: "1h",
   });
   return [refreshToken, fgp];
