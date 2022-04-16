@@ -1,7 +1,7 @@
-const { hash, compare } = require("bcrypt");
+const bcrypt = require("bcrypt");
 const { Schema, model } = require("mongoose");
-const generateAccessToken = require("../util/authentication");
-const jwt = require("jsonwebtoken");
+
+const dbga = require("debug")("app:auth");
 
 const rounds = 10;
 
@@ -17,18 +17,30 @@ const userSchema = new Schema({
   },
   accountType: {
     type: String,
-    enum: ["admin", "lister", "renter"],
+    enum: ["admin", "lister", "owner", "agent", "renter"],
     required: true,
+  },
+  listings: {
+    required: false,
   },
 });
 
+// userSchema.methods.comparePassword = function (password, cb) {
+//   dbga("this", this);
+//   bcrypt.compare(password, this.password, (err, isMatch) => {
+//     if (err) return cb(err);
+//     cb(undefined, isMatch);
+//   });
+// };
+
 userSchema.methods.comparePassword = function (password) {
-  return compare(password, this.password);
+  return bcrypt.compare(password, this.password);
 };
 
 userSchema.pre("save", function (next) {
   if (!this.isModified("password")) return next();
-  hash(this.password, rounds, function (err, hash) {
+  const salt = bcrypt.genSaltSync(rounds);
+  bcrypt.hash(this.password, salt, (err, hash) => {
     if (err) return next(err);
     this.password = hash;
     next();

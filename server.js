@@ -23,7 +23,13 @@ mongoose.connection.once("open", () => {
   console.log("connected to mongoose...");
 });
 
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  })
+);
 app.use(express.json());
 app.use("/api/listings", ListingController);
 app.use("/auth", AuthController);
