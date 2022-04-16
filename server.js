@@ -24,12 +24,15 @@ mongoose.connection.once("open", () => {
 });
 
 app.use(
-  cors({
-    credentials: true,
-    origin: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  })
+  cors(
+  {
+    credentials:true,
+  origin:true,
+  methods:'GET,HEAD,PUT,PATCH,POST,DELETE'
+  }
+)
 );
+
 app.use(express.json());
 app.use("/api/listings", ListingController);
 app.use("/auth", AuthController);
