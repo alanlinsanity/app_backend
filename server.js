@@ -5,12 +5,12 @@ const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
 const morgan = require("morgan");
+const { port, mongoUri } = require("./util/envhelper");
 const morganFmt = process.env.NODE_ENV === "development" ? "dev" : "tiny";
 
 const app = express();
-const PORT = process.env.PORT ?? 2000;
-const MONGODB_URI =
-  process.env.MONGODB_URI ?? "mongodb://localhost:27017/listings";
+const PORT = port;
+const MONGODB_URI = mongoUri;
 
 // Error / Disconnection
 mongoose.connection
@@ -23,9 +23,6 @@ mongoose.connection
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
 });
-mongoose.connection.once("open", () => {
-  console.log("connected to mongoose...");
-});
 
 app
   .use(morgan(morganFmt))
@@ -35,7 +32,7 @@ app
       origin: true,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     })
-)
+  )
   .use(express.json())
   .use("/api/listings", ListingController)
   .use("/auth", AuthController);
