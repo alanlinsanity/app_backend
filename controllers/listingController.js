@@ -26,7 +26,8 @@ router.get("/seed", async (req, res) => {
       property_type: "HDB",
       size: 1100,
       price: 3200,
-      image: "https://www.asiaone.com/sites/default/files/original_images/Sep2019/230919_hmlet8.jpg",
+      image:
+        "https://www.asiaone.com/sites/default/files/original_images/Sep2019/230919_hmlet8.jpg",
       no_of_bedrooms: 3,
       no_of_bathrooms: 2,
       description: "HDB that is just 500m away from Sembawang MRT. Close to market and eateries. Sun Plaza and Sembawang Shopping Centre are just within 10 minutes commute away."
@@ -81,32 +82,31 @@ router.get("/seed", async (req, res) => {
         no_of_bathrooms: 3,
         description: "This is a recently renovated Shophouse that is located just beside Siglap V Shopping Centre. Tenants are able to enjoy a myriad of lifestyle choices ranging from european bars & bistros to local delights."
       },
-  ]
+  ];
   await Listing.deleteMany({});
-  await Listing.insertMany(listings)
-  res.json(listings)
-})
+  await Listing.insertMany(listings);
+  res.json(listings);
+});
 
 //* Index Route
-router.get('/', (req, res) => {
+router.get("/", (req, res) => {
   Listing.find()
-    .then(listings => {
-      res.json(listings)
+    .then((listings) => {
+      res.json(listings);
     })
-    .catch(err => {
-      res.json(err)
-    })
-})
+    .catch((err) => {
+      res.json(err);
+    });
+});
 
 //* Create Route
 router.post("/", async (req, res) => {
-  console.log("body", req.body)
   try {
     const createdListing = await Listing.create(req.body);
     res.status(200).send(createdListing);
   } catch (error) {
     res.status(400).json({ error: error.message });
-  };
+  }
 });
 
 //* Delete Route

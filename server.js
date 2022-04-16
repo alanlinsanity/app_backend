@@ -32,6 +32,7 @@ app.use(
   }
 )
 );
+
 app.use(express.json());
 app.use("/api/listings", ListingController);
 app.use("/auth", AuthController);
