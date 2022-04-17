@@ -1,17 +1,8 @@
-const bcrypt = require("bcrypt");
 const { Schema, model } = require("mongoose");
-
-// const dbga = require("debug")("app:auth");
-const rounds = 10;
+const { compare, preSaveHashPWHook } = require("../modules/auth");
 
 const maxLoginAttempts = 5;
 const lockTime = 2 * 60 * 60 * 1000;
-
-// const hashPass = (input) => {
-//   const salt = bcrypt.genSaltSync(rounds);
-//   const hash = bcrypt.hashSync(input, salt);
-//   return hash;
-// };
 
 const userSchema = new Schema({
   username: {
@@ -51,18 +42,19 @@ const userSchema = new Schema({
   lockUntil: Number,
 });
 
-// userSchema.methods.comparePassword = function (password, cb) {
-//   dbga("this", this);
-//   bcrypt.compare(password, this.password, (err, isMatch) => {
-//     if (err) return cb(err);
-//     cb(undefined, isMatch);
-//   });
-// };
-
 userSchema.methods.comparePassword = function (password) {
-  return bcrypt.compare(password, this.password);
+  compare(password, this.password);
 };
-userSchema.methods.incLoginAttempts = function () {
+
+userSchema.pre("save", preSaveHashPWHook);
+
+const reasons = (userSchema.statics.failedLogin = {
+  NOT_FOUND: 0,
+  PASSWORD_INCORRECT: 1,
+  MAX_ATTEMPTS: 2,
+});
+
+/* userSchema.methods.incLoginAttempts = function () {
   // if user is locked and timer expired
   if (this.lockUntil && this.lockUntil < Date.now() / 1000) {
     // reset lock
@@ -78,32 +70,17 @@ userSchema.methods.incLoginAttempts = function () {
   if (this.loginAttempts + 1 >= maxLoginAttempts && !this.isLocked) {
     updates.$set = { lockUntil: Date.now() / 1000 + lockTime };
   }
-  return this.update(updates, cb);
+  return this.update(updates);
 };
 
 userSchema.virtual("isLocked").get(function () {
   // check for a future lockUntil timestamp
   return !!(this.lockUntil && this.lockUntil > Date.now());
 });
-
-userSchema.pre("save", function (next) {
-  if (!this.isModified("password")) return next();
-  const salt = bcrypt.genSaltSync(rounds);
-  const hash = bcrypt.hashSync(this.password, salt);
-  this.password = hash;
-  next();
-});
-
-const reasons = (userSchema.statics.failedLogin = {
-  NOT_FOUND: 0,
-  PASSWORD_INCORRECT: 1,
-  MAX_ATTEMPTS: 2,
-});
-
 userSchema.statics.getAuthenticated = async function ({ username, password }) {
   const user = await this.findOne({ username });
   let reason;
-  if (!user) return null;
+  if (!user) return undefined;
 
   if (user.isLocked) {
     reason = reasons.MAX_ATTEMPTS;
@@ -123,7 +100,7 @@ userSchema.statics.getAuthenticated = async function ({ username, password }) {
 
   reason = reasons.PASSWORD_INCORRECT;
   user.incLoginAttempts();
-};
+}; */
 
 const User = model("User", userSchema);
 
