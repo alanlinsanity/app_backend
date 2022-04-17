@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "lib": ["DOM", "ESNext"],
+    "target": "ES6",
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "./modules/lib",
+    "rootDir": "."
+  },
+  "compileOnSave": true,
+  "typeAcquisition": {
+    "enable": true,
+    "enableAutoDiscovery": true
+  },
+  "include": ["./modules/src/**/*.ts"],
+  "exclude": ["node_modules", "out", "__tests__"]
+}

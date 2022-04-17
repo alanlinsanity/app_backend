@@ -1,9 +1,0 @@
-{
-  "compilerOptions": {
-    "lib": ["DOM", "ESNext"],
-    "target": "ES6"
-  },
-  "typeAcquisition": {
-    "enable": true
-  }
-}

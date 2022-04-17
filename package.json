@@ -10,14 +10,22 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
+    "jest": "^27.5.1",
+    "jest-extended": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.10"
   },
   "devDependencies": {
+    "@babel/core": "^7.17.9",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-typescript": "^7.16.7",
+    "@types/bcrypt": "^5.0.0",
+    "@types/jest": "^27.4.1",
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
     "nodemon": "^2.0.15",
-    "prettier": "^2.6.2"
+    "prettier": "^2.6.2",
+    "typescript": "^4.6.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
