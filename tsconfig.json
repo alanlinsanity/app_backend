@@ -5,17 +5,15 @@
     "moduleResolution": "node",
     "module": "CommonJS",
     "lib": ["DOM", "ESNext"],
+    "allowJs": true,
     "target": "ES6",
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "./modules/lib",
-    "rootDir": "."
+    "rootDir": ".",
+    "noEmit": false,
+    "watch": true
   },
-  "compileOnSave": true,
   "typeAcquisition": {
     "enable": true,
     "enableAutoDiscovery": true
   },
-  "include": ["./modules/src/**/*.ts"],
-  "exclude": ["node_modules", "out", "__tests__"]
+  "files": ["models/Users.ts"]
 }
