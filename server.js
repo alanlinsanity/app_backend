@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
+const TenantController = require("./controllers/tenantController");
 
 const app = express();
 const PORT = process.env.PORT ?? 2000;
@@ -36,6 +37,8 @@ app.use(
 app.use(express.json());
 app.use("/api/listings", ListingController);
 app.use("/auth", AuthController);
+
+app.use("/api/tenant", TenantController);
 
 app.get("/", (req, res) => {
   res.send("Welcome to Reallistic");
