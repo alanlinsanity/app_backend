@@ -1,3 +1,5 @@
+// eslint-disable-next-line eslint-comments/disable-enable-pair
+/* eslint-disable no-undef */
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
@@ -5,11 +7,15 @@ const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
 const morgan = require("morgan");
-const { isProduction, mongoUri } = require("./util/envhelper");
+const { isProduction, mongoUri, prodUrls, ports } = require("./util/envhelper");
 const morganFmt = isProduction ? "tiny" : "dev";
+const frontEndUrls = [
+  `http://localhost:${ports.local.frontend}`,
+  prodUrls.frontend,
+];
 
 const app = express();
-const PORT = 2000;
+const PORT = ports.local.backend;
 const MONGODB_URI = mongoUri;
 
 // Error / Disconnection
@@ -26,10 +32,11 @@ mongoose.connect(MONGODB_URI, {
 
 app
   .use(morgan(morganFmt))
+  .set("trust proxy", true)
   .use(
     cors({
       credentials: true,
-      origin: true,
+      origin: frontEndUrls,
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     })
   )

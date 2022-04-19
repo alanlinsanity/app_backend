@@ -18,7 +18,9 @@ const myConfig = {
     node: true,
     amd: true,
   },
-  rules: {},
+  rules: {
+    "unicorn/prefer-module": "off",
+  },
 };
 
 const config = extendsPath ? defaultConfig : myConfig;
