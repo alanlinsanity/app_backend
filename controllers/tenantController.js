@@ -157,10 +157,25 @@ router.post("/", async (req, res) => {
 //   await TenantWatchList.findByIdAndUpdate({_id:req.params.id}, req.body);
 //   res.json({ message: "Listing Updated" });
 // });
+
+
+// router.put("/:id", async (req, res) => {
+//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
+//   console.log(req.body)
+//   res.json({ message: "Listing Updated" });
+// });
+
+// router.put("/:id", async (req, res) => {
+//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
+//   console.log(req.body)
+//   res.json({ message: "Listing Updated" });
+// });
+
 router.put("/:id", async (req, res) => {
-  await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
-  console.log(req.body)
-  res.json({ message: "Listing Updated" });
-});
+  const update = await TenantWatchList.findById({_id:"625ea35742bc0937b5cf24b9"});
+  console.log(update.postal)
+
+  console.log(update)
+})
 
 module.exports = router;
