@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "module": "CommonJS",
+    "lib": ["DOM", "ESNext"],
+    "allowJs": true,
+    "target": "ES6",
+    "rootDir": ".",
+    "noEmit": false,
+    "watch": true
+  },
+  "typeAcquisition": {
+    "enable": true,
+    "enableAutoDiscovery": true
+  },
+  "files": ["models/Users.ts"]
+}
