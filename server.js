@@ -5,11 +5,11 @@ const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
 const morgan = require("morgan");
-const { port, mongoUri } = require("./util/envhelper");
-const morganFmt = process.env.NODE_ENV === "development" ? "dev" : "tiny";
+const { isProduction, mongoUri } = require("./util/envhelper");
+const morganFmt = isProduction ? "tiny" : "dev";
 
 const app = express();
-const PORT = port;
+const PORT = 2000;
 const MONGODB_URI = mongoUri;
 
 // Error / Disconnection

@@ -131,6 +131,20 @@ router.get("/test", authenticateToken, async (req, res) => {
   res.json({ msg: "we good" });
 });
 
+//addfavourite
+// router.post("", (req, res) => {
+//   const { fav, user } = req.body;
+
+//   const currentUser = user;
+//   User.findOneAndUpdate(
+//     { username: currentUser },
+//     { $push: { favourites: fav } }
+//   );
+
+//   const favourites = [];
+
+//   favourites.push(newfav);
+// });
 // //* Delete Route
 // router.delete("/:id", async (req, res) => {
 //   /*   await Listing.findByIdAndRemove(req.params.id);
