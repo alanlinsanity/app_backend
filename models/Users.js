@@ -32,7 +32,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = exports.preSaveHashPWHook = exports.compare = exports.hash = void 0;
+exports.User = exports.authenticateUser = exports.preSaveHashPWHook = exports.compare = exports.hash = void 0;
 const mongoose = __importStar(require("mongoose"));
 const bcrypt = __importStar(require("bcrypt"));
 const accountTypes = ["admin", "lister", "owner", "agent", "renter"];
@@ -68,6 +68,7 @@ function authenticateUser({ username, password }) {
         return user;
     });
 }
+exports.authenticateUser = authenticateUser;
 const userSchema = new mongoose.Schema({
     username: {
         type: String,

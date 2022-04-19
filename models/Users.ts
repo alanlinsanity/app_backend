@@ -35,7 +35,7 @@ const instanceMethods = {
 
 type UserModel = mongoose.Model<IUser, unknown, typeof instanceMethods>;
 
-async function authenticateUser(
+export async function authenticateUser(
   this: UserModel,
   { username, password }: { username: string; password: string }
 ) {

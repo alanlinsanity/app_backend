@@ -1,4 +1,9 @@
-import { hash, compare, preSaveHashPWHook, authUser } from "../models/Users";
+import {
+  hash,
+  compare,
+  preSaveHashPWHook,
+  authenticateUser,
+} from "../models/Users";
 
 describe("password hashing and comparing", () => {
   describe("hashing function", () => {
@@ -62,16 +67,17 @@ describe("authUser instance method", () => {
   });
 
   it("returns undefined when user is not found", async () => {
+    // eslint-disable-next-line unicorn/no-null
     userModel.findOne.mockResolvedValueOnce(null);
     expect(user.comparePassword).not.toHaveBeenCalled();
-    const result = await authUser.call(userModel, user);
+    const result = await authenticateUser.call(userModel, user);
     expect(result).toBeUndefined();
   });
 
   it("returns undefined when password does not match", async () => {
     userModel.findOne.mockReturnValueOnce(user);
     user.comparePassword.mockResolvedValueOnce(false);
-    const result = await authUser.call(userModel, {
+    const result = await authenticateUser.call(userModel, {
       ...user,
       password: "wrong password",
     });
@@ -81,7 +87,7 @@ describe("authUser instance method", () => {
   it("returns user when password matches", async () => {
     userModel.findOne.mockReturnValueOnce(user);
     user.comparePassword.mockResolvedValueOnce(true);
-    const result = await authUser.call(userModel, user);
+    const result = await authenticateUser.call(userModel, user);
     expect(result).toBe(user);
   });
 });
