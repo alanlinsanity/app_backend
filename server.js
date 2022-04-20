@@ -5,7 +5,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
-const AuthController = require("./controllers/auth");
+const AuthController = require("./controllers/auth");3
+const tenantUserController = require("./controllers/tenantUserController");
 const morgan = require("morgan");
 const { isProduction, mongoUri, prodUrls, ports } = require("./util/envhelper");
 const morganFmt = isProduction ? "tiny" : "dev";
@@ -16,7 +17,7 @@ const frontEndUrls = [
 
 const app = express();
 const PORT = ports.local.backend;
-const MONGODB_URI = mongoUri;
+const MONGODB_URI = "mongodb+srv://alanlinsanity:s9221683g@cluster0.vq2et.mongodb.net/reallistic" //mongoUri;
 
 // Error / Disconnection
 mongoose.connection
@@ -47,6 +48,8 @@ app
 app.get("/", (req, res) => {
   res.send("Welcome to Reallistic");
 });
+
+app.use("/api/tenant", tenantUserController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

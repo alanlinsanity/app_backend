@@ -34,7 +34,7 @@ router.get("/seed", async (req, res) => {
   ];
 
   try {
-    await User.create(users);
+    await User.insertMany(users);
     res.send("Seeded");
   } catch (error) {
     res.send(`ERROR: ${error}`);
