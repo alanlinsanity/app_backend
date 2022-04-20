@@ -2,7 +2,6 @@
 const express = require('express');
 const TenantWatchList = require("../models/TenantWatchlist")
 const router = express.Router();
-const Listing = require("../models/Listing")
 
 ////("/api/tenant", TenantController);
 
