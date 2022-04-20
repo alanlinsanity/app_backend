@@ -2,6 +2,7 @@
 const express = require('express');
 const TenantWatchList = require("../models/TenantWatchlist")
 const router = express.Router();
+const Listing = require("../models/Listing")
 
 ////("/api/tenant", TenantController);
 
@@ -184,7 +185,7 @@ router.put("/:id", async (req, res) => {
   // console.log('update',update)
   // console.log('update.favourites',update.favourites)
 
-  const update = await TenantWatchList.findByIdAndUpdate({_id:"625ee3e32c4ae8a2064d299a"},{$push: {favourites:fav}})
+  const update = await TenantWatchList.findByIdAndUpdate({_id:"625fd83e6a127679766fc98f"},{$push: {favourites:fav}})
   
   if(update ===null){
     console.log('mongo search is null')
