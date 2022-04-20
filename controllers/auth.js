@@ -26,8 +26,36 @@ router.get("/seed", async (req, res) => {
       accountType: "lister",
     },
     {
+      username: "lister-2",
+      password: "lister312",
+      accountType: "lister",
+    },
+    {
+      username: "lister-3",
+      password: "lister312",
+      accountType: "lister",
+    },
+    {
+      username: "lister-4",
+      password: "lister312",
+      accountType: "lister",
+    },
+    {
       username: "renter",
       password: "renter321",
+      accountType: "renter",
+    },
+    {
+      username: "renter-2",
+      password: "renter234",
+      accountType: "renter",
+    },    {
+      username: "renter-3",
+      password: "renter345",
+      accountType: "renter",
+    },    {
+      username: "renter-4",
+      password: "renter456",
       accountType: "renter",
     },
   ];

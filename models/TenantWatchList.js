@@ -13,6 +13,9 @@ const listingSchema = mongoose.Schema({
   no_of_bathrooms: { type: Number, required: true},
   description: { type: String },
   likes: { type: Number, default: 0 },
+  favourites: [
+    {type: String, required:true}
+    ]
 });
 
 //Tenant's id

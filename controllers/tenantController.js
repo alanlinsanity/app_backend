@@ -52,7 +52,8 @@ router.get("/seed", async (req, res) => {
       no_of_bedrooms: 3,
       no_of_bathrooms: 2,
       description: "This is a well-furnished condominium called Hundred Trees that is just 500m away from Clementi MRT. Nearby amenities include Ayer Rajah Food Centre.",
-      likes:0
+      likes:0,
+      favourites : " "
     },
     { 
       id:2,
@@ -66,7 +67,8 @@ router.get("/seed", async (req, res) => {
         "https://www.asiaone.com/sites/default/files/original_images/Sep2019/230919_hmlet8.jpg",
       no_of_bedrooms: 3,
       no_of_bathrooms: 2,
-      description: "HDB that is just 500m away from Sembawang MRT. Close to market and eateries. Sun Plaza and Sembawang Shopping Centre are just within 10 minutes commute away."
+      description: "HDB that is just 500m away from Sembawang MRT. Close to market and eateries. Sun Plaza and Sembawang Shopping Centre are just within 10 minutes commute away.",
+      favourites : []
     },
     {   
         id:1,
@@ -80,7 +82,8 @@ router.get("/seed", async (req, res) => {
         no_of_bedrooms: 4,
         no_of_bathrooms: 3,
         description: "This is a Private development that is close to the city. 5 minutes walk to bus-stop. Nearest MRT is Harbourfront Interchange.",
-        likes:0
+        likes:0,
+        favourites : []
       },
       { 
         id:4,
@@ -94,7 +97,8 @@ router.get("/seed", async (req, res) => {
         no_of_bedrooms: 3,
         no_of_bathrooms: 2,
         description: "This is a well-furnished HDB that is just 500m away from Segar LRT. The nearest MRT is Bukit Panjang MRT where you can change to the Downtown Line.",
-        likes:0
+        likes:0,
+        favourites : []
       },
       {
         id:5,
@@ -108,7 +112,8 @@ router.get("/seed", async (req, res) => {
         no_of_bedrooms: 4,
         no_of_bathrooms: 3,
         description: "This is a well-furnished Private Landed that is located in the Seletar Hills Estate. Greenwich V is an easily accessible mall for your daily groceries and f&b needs. Comes with 2 parking lots.",
-        likes:0
+        likes:0,
+        favourites : []
       },
       {
         id:6,
@@ -122,7 +127,8 @@ router.get("/seed", async (req, res) => {
         no_of_bedrooms: 4,
         no_of_bathrooms: 3,
         description: "This is a recently renovated Shophouse that is located just beside Siglap V Shopping Centre. Tenants are able to enjoy a myriad of lifestyle choices ranging from european bars & bistros to local delights.",
-        likes:0
+        likes:0,
+        favourites : []
       },
   ];
   await TenantWatchList.deleteMany({});
@@ -172,10 +178,20 @@ router.post("/", async (req, res) => {
 // });
 
 router.put("/:id", async (req, res) => {
-  const update = await TenantWatchList.findById({_id:"625ea35742bc0937b5cf24b9"});
-  console.log(update.postal)
+  const  {fav } = req.body;
+  // const update = await TenantWatchList.findById({_id:"625ee3e32c4ae8a2064d299a"});
+  // console.log('fav',fav)
+  // console.log('update',update)
+  // console.log('update.favourites',update.favourites)
 
-  console.log(update)
+  const update = await TenantWatchList.findByIdAndUpdate({_id:"625ee3e32c4ae8a2064d299a"},{$push: {favourites:fav}})
+  
+  if(update ===null){
+    console.log('mongo search is null')
+  }//else //update.favourites =fav
+  
+  console.log('update',update)
+  await update.save()
 })
 
 module.exports = router;
