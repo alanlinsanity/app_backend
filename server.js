@@ -17,7 +17,7 @@ const frontEndUrls = [
 
 const app = express();
 const PORT = ports.local.backend;
-const MONGODB_URI = "mongodb+srv://alanlinsanity:s9221683g@cluster0.vq2et.mongodb.net/reallistic" //mongoUri;
+const MONGODB_URI = mongoUri;
 
 // Error / Disconnection
 mongoose.connection

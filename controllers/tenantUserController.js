@@ -43,7 +43,7 @@ router.get("/seed", async (req, res) => {
     { 
       username: "tenant-1",
       accountType: "renter",
-      favourites : " "
+      favourites : " "    //[] lags
     },
     { 
       username: "tenant-2",
@@ -111,7 +111,7 @@ router.put("/:id", async (req, res) => {
   // console.log('update.favourites',update.favourites)
 
   //_id shld be tagged to the logged in User
-  const update = await TenantUser.findByIdAndUpdate({_id:"626005436894f9abe141f1a0"},{$push: {favourites:fav}})
+  const update = await TenantUser.findByIdAndUpdate({_id:"62603024c55f82e765ede5e5"},{$push: {favourites:fav}})
   
   if(update ===null){
     console.log('mongo search is null')
