@@ -88,6 +88,90 @@ router.get("/seed", async (req, res) => {
       description:
         "This is a recently renovated Shophouse that is located just beside Siglap V Shopping Centre. Tenants are able to enjoy a myriad of lifestyle choices ranging from european bars & bistros to local delights.",
     },
+    {
+      postal: "548315",
+      district: 19,
+      address: "1 Kang Choo Bin Rd",
+      property_type: "Private",
+      size: 2500,
+      price: 5800,
+      image:
+        "https://www.superink.com.sg/wp-content/uploads/riviere-condo-4-bedroom-apartment-living-dining-room-hr.jpg",
+      no_of_bedrooms: 5,
+      no_of_bathrooms: 3,
+      description:
+        "Located in between Kovan & Hougang Estate. This landed house underwent refurbishment in 2010 and comes with a beautiful lift and pool. Parking for 2 cars.",
+    },
+    {
+      postal: "239199",
+      district: 9,
+      address: "18 Leonie Hill Rd",
+      property_type: "Private",
+      size: 1500,
+      price: 8000,
+      image:
+        "https://www.myexclusivecondo.com/wp-content/uploads/2018/07/Freehold-New-Futura-showflat.jpg",
+      no_of_bedrooms: 3,
+      no_of_bathrooms: 3,
+      description:
+        "This is an ultra-luxurious development located in the prime district 9. This development is just 5 minutes walk away from Somerset MRT and the Orchard Shopping Belt.",
+    },
+    {
+      postal: "098417",
+      district: 4,
+      address: "Keppel Bay View",
+      property_type: "Private",
+      size: 1500,
+      price: 4500,
+      image:
+        "https://d1hy6t2xeg0mdl.cloudfront.net/image/304331/886f010ac5/standard",
+      no_of_bedrooms: 4,
+      no_of_bathrooms: 3,
+      description:
+        "If you love waterfront living, Reflections at Keppel Bay is the development for you. Not only are you living in an iconic development by a renowned architect, the development is also just 7 minutes walk to Vivo City and Harbourfront MRT Station.",
+    },
+    {
+      postal: "090103",
+      district: 04,
+      address: "103 Bukit Purmei Rd",
+      property_type: "HDB",
+      size: 1200,
+      price: 3600,
+      image:
+        "https://d1hy6t2xeg0mdl.cloudfront.net/image/477199/56ba444cfb/standard",
+      no_of_bedrooms: 4,
+      no_of_bathrooms: 2,
+      description:
+        "This unique and quaint HDB is just a 5 minutes bus-ride away from the Central Business District. Moreover, you can enjoy coffeeshops and amenities located just down your block.",
+    },
+    {
+      postal: "570241",
+      district: 20,
+      address: "241 Bishan Street 22",
+      property_type: "HDB",
+      size: 1350,
+      price: 4800,
+      image:
+        "https://hw-media.herworld.com/public/2021/10/HDB-BTO-in-Sengkang-.jpeg",
+      no_of_bedrooms: 3,
+      no_of_bathrooms: 2,
+      description:
+        "This 5-Room HDB boasts a spectacular view of Bishan Park and has a Macdonalds located just 1 minute away. Tenants are able to commute to Bishan North Shopping Centre within 5 minutes stroll.",
+    },
+    {
+      postal: "141079",
+      district: 03,
+      address: "79 Dawson Rd",
+      property_type: "HDB",
+      size: 904,
+      price: 3300,
+      image:
+        "https://static.mothership.sg/1/2017/01/LowresPasirRis-06.jpg",
+      no_of_bedrooms: 3,
+      no_of_bathrooms: 2,
+      description:
+        "This 4-Room HDB has special permission to rent before its 5 year MOP. Tastefully renovated by owners in 2020, this unit is just 5 minutes away from Queenstown MRT Station.",
+    } 
   ];
   await Listing.deleteMany({});
   await Listing.insertMany(listings);
