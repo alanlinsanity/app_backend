@@ -1,6 +1,6 @@
 const express = require("express");
-const models = require("../models");
-const { User, Listing } = models;
+const Listing = require("../models/Listing");
+const User = require('../models/Users')
 
 const dbga = require("debug")("app:auth");
 
@@ -14,7 +14,7 @@ const router = express.Router();
 
 router.get("/seed", async (req, res) => {
   dbga("seed");
-  await User.deleteMany({});
+  await User.deleteMany().exec();
   const users = [
     {
       username: "admin",
