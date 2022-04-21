@@ -112,7 +112,7 @@ router.post("/login", async (req, res) => {
       })
       .json({ token, refreshToken });
   } catch (error) {
-    res.status(500).json({ message: "Error logging in" });
+    res.status(500).json({ message: error });
   }
 });
 
