@@ -1,7 +1,5 @@
 /* eslint-env node, amd */
-const path = require("path");
-
-const extendsPath = path.resolve(__dirname, "../../../..", ".eslintrc.yml");
+const eslintrcPath = process.env.ESLINTRC_PATH ?? undefined;
 
 const defaultConfig = {
   extends: ["eslint:recommended", "prettier"],
@@ -12,7 +10,7 @@ const defaultConfig = {
 };
 
 const myConfig = {
-  extends: [extendsPath],
+  extends: [eslintrcPath],
   env: {
     es2022: true,
     node: true,
@@ -23,6 +21,6 @@ const myConfig = {
   },
 };
 
-const config = extendsPath ? defaultConfig : myConfig;
+const config = eslintrcPath ? myConfig : defaultConfig;
 
 module.exports = config;
