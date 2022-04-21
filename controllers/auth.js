@@ -1,6 +1,6 @@
 const express = require("express");
 const models = require("../models");
-const { User } = models;
+const { User, Listing } = models;
 
 const dbga = require("debug")("app:auth");
 
@@ -95,19 +95,24 @@ router.get("/check", async (req, res) => {
 
 //*
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
   try {
     const user = await User.getAuthenticated(req.body);
-    if (!user) res.status(401).json({ msg: "failed to login" });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+
     const { username, accountType } = user;
     const token = generateAccessToken({ username, accountType });
     const [refreshToken, fgp] = generateRefreshToken();
+
     res
       .status(200)
-      .cookie("__Secure-fgp", fgp, { httpOnly: true, secure: true })
+      .cookie("__secure-fgp", fgp, {
+        domain: "localhost",
+        secure: true,
+        httpOnly: true,
+      })
       .json({ token, refreshToken });
-  } catch (err) {
-    res.status(429).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging in" });
   }
 });
 
@@ -116,19 +121,35 @@ router.post("/login", async (req, res) => {
 router.post("/signup", async (req, res) => {
   const user = await User.find({ username: req.body.username });
   if (user.length > 0) {
-    return res.status(400).send("Username already taken");
+    return res.status(400).json({
+      message: "Username already exists",
+    });
   }
-  const newUser = new User(req.body);
-  try {
-    await newUser.save();
-    res.json(JSON.stringify(newUser));
-  } catch (error) {
-    res.json({ ERROR: error });
-  }
+  const newUser = await User.create(req.body);
+  const token = generateAccessToken({ username, accountType });
+  const [refreshToken, fgp] = generateRefreshToken();
+
+  res
+    .status(201)
+    .json(newUser)
+    .cookie("__secure-fgp", fgp, {
+      domain: "localhost",
+      secure: true,
+      httpOnly: true,
+    })
+    .json({ token, refreshToken });
 });
 
-router.get("/test", authenticateToken, async (req, res) => {
-  res.json({ msg: "we good" });
+router.get("/test", async (req, res) => {
+  const users = User.find({}).exec();
+  const listings = Listing.find({}).exec();
+
+  await Promise.all([users, listings]);
+
+  res.json({ users, listings });
+
+  // console.log(req);
+  // console.log("req.cookies", req.cookies);
 });
 
 //addfavourite

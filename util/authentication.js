@@ -4,8 +4,8 @@ const { accessSecret, refreshSecret } = require("./envhelper");
 
 // const hash = ({}) => crypto.createHash("sha256").update("password").digest("hex");
 
-function generateAccessToken(userInfo) {
-  return jwt.sign(userInfo, accessSecret, {
+function generateAccessToken(payload) {
+  return jwt.sign(payload, accessSecret, {
     expiresIn: "15m",
   });
 }

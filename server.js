@@ -3,6 +3,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
@@ -41,6 +42,7 @@ app
     })
   )
   .use(express.json())
+  .use(cookieParser())
   .use("/api/listings", ListingController)
   .use("/auth", AuthController);
 
