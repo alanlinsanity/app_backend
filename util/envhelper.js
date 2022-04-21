@@ -4,10 +4,13 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const dbName = process.env.DBNAME;
 
+
 const mongoUri = isProduction
   ? `${process.env.MONGODB_URI}${dbName}`
   : `mongodb://localhost:27017/${dbName}`;
 
+
+//"mongodb+srv://alanlinsanity:s9221683g@cluster0.vq2et.mongodb.net/reallistic" 
 const accessSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
 
