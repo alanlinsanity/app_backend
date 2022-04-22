@@ -2,9 +2,6 @@
 /* eslint-disable no-undef */
 require("dotenv").config();
 const express = require("express");
-const debug = require("debug");
-const debugserver = debug("app:server:debug");
-const logserver = debug("app:server:log");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
@@ -19,6 +16,7 @@ const Listing = require("./models/Listing");
 const app = express();
 const PORT = ports.backend;
 const MONGODB_URI = mongoUri;
+console.log("MongoURI", MONGODB_URI);
 
 // Error / Disconnection
 mongoose.connection
@@ -48,7 +46,8 @@ app
   .use(express.json())
   .use(cookieParser("secret"))
   .use("/api/listings", ListingController)
-  .use("/auth", AuthController);
+  .use("/auth", AuthController)
+  .use("/api/tenant", tenantUserController);
 
 app.get("/", async (req, res) => {
   const db = await mongoose.connection.asPromise();
@@ -70,7 +69,7 @@ app.get("/", async (req, res) => {
 // res.send({ users, listings });
 // res.send("Welcome to Reallistic");
 
-app.use("/api/tenant", tenantUserController);
+// app.use("/api/tenant", tenantUserController);
 
 app.listen(PORT, () => {
   logserver(`Server is running on port ${PORT}`);

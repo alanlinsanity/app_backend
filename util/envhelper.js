@@ -9,6 +9,11 @@ const mongoUri =
     ? `mongodb://localhost:27017/${dbName}`
     : `${process.env.MONGODB_URI}${dbName}`;
 
+const mongoUri =
+  process.env.useLocal === "1"
+    ? `mongodb://localhost:27017/${dbName}`
+    : `${process.env.MONGODB_URI}${dbName}`;
+
 //"mongodb+srv://alanlinsanity:s9221683g@cluster0.vq2et.mongodb.net/reallistic"
 const accessSecret = process.env.ACCESS_TOKEN_SECRET;
 const refreshSecret = process.env.REFRESH_TOKEN_SECRET;
