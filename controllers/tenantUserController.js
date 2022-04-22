@@ -91,31 +91,37 @@ router.post("/", async (req, res) => {
 // });
 
 
-// router.put("/:id", async (req, res) => {
-//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
-//   console.log(req.body)
-//   res.json({ message: "Listing Updated" });
-// });
-
-// router.put("/:id", async (req, res) => {
-//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
-//   console.log(req.body)
-//   res.json({ message: "Listing Updated" });
-// });
-
 router.put("/:id", async (req, res) => {
   const  {fav } = req.body;
   //_id shld be tagged to the logged in User
-  const tenantID = "626256bdbd0702716c26976c"
-  // const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$push: {favourites:fav}})
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  //console.log("ID>>>",req.params.id)
   const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$addToSet: {favourites:fav}})
 
   if(update ===null){
     console.log('mongo search is null')
   }//else //update.favourites =fav
   
-  console.log('update',update)
+  //console.log('update',update)
   await update.save()
 })
+
+router.put("/:id", async (req, res) => {
+  const  {deleteFav } = req.body;
+  console.log(deleteFav)
+  //_id shld be tagged to the logged in User
+  const tenantID = "626256bdbd0702716c26976c"
+  // const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$push: {favourites:fav}})
+  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:deleteFav}})
+
+  if(update ===null){
+    console.log('mongo search is null----pull')
+  }//else //update.favourites =fav
+  
+  console.log('update--pull',update)
+  await update.save()
+})
+
+
 
 module.exports = router;
