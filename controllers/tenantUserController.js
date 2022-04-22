@@ -6,12 +6,12 @@ const router = express.Router();
 ////("/api/tenant", TenantController);
 
 //* Index Route
-router.get("/", (req, res) => {
-  res.send('you are at tenant space')
-    .catch((err) => {
-      res.json(err);
-    });
-});
+// router.get("/", (req, res) => {
+//   res.send('you are at tenant space')
+//     .catch((err) => {
+//       res.json(err);
+//     });
+// });
 
 
 // //* Delete Route
@@ -43,17 +43,17 @@ router.get("/seed", async (req, res) => {
     { 
       username: "tenant-1",
       accountType: "renter",
-      favourites : " "    //[] lags
+      favourites : []    //[] lags
     },
     { 
       username: "tenant-2",
       accountType: "renter",
-      favourites : " "
+      favourites : []
     },
     { 
       username: "tenant-3",
       accountType: "renter",
-      favourites : " "
+      favourites : []
     },
  
   ];
@@ -63,7 +63,7 @@ router.get("/seed", async (req, res) => {
 });
 
 //* Index Route
-router.get("/listings", (req, res) => {
+router.get("/", (req, res) => {
   TenantUser.find()
     .then((listings) => {
       res.json(listings);
@@ -105,14 +105,11 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const  {fav } = req.body;
-  // const update = await TenantWatchList.findById({_id:"625ee3e32c4ae8a2064d299a"});
-  // console.log('fav',fav)
-  // console.log('update',update)
-  // console.log('update.favourites',update.favourites)
-
   //_id shld be tagged to the logged in User
-  const update = await TenantUser.findByIdAndUpdate({_id:"62603024c55f82e765ede5e5"},{$push: {favourites:fav}})
-  
+  const tenantID = "626256bdbd0702716c26976c"
+  // const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$push: {favourites:fav}})
+  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$addToSet: {favourites:fav}})
+
   if(update ===null){
     console.log('mongo search is null')
   }//else //update.favourites =fav

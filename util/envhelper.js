@@ -5,9 +5,10 @@ const isProduction = process.env.NODE_ENV === "production";
 const dbName = process.env.DBNAME;
 
 
-const mongoUri = isProduction
-  ? `${process.env.MONGODB_URI}${dbName}`
-  : `mongodb://localhost:27017/${dbName}`;
+const mongoUri = 
+(process.env.useLocal === "1")
+  ? `mongodb://localhost:27017/${dbName}`
+  : `${process.env.MONGODB_URI}${dbName}`
 
 
 //"mongodb+srv://alanlinsanity:s9221683g@cluster0.vq2et.mongodb.net/reallistic" 
