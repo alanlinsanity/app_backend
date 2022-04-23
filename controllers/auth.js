@@ -1,19 +1,23 @@
 const express = require("express");
-const Listing = require("../models/Listing");
-const User = require('../models/Users')
 
-const dbga = require("debug")("app:auth");
+// const { Listing } = require("../models/Listing");
+const { User } = require("../models/Users");
+
+
+const dbg = require("debug")("app:auth");
 
 const {
   generateAccessToken,
-  authenticateToken,
+  // authenticateToken,
   generateRefreshToken,
 } = require("../util/authentication");
 
 const router = express.Router();
 
 router.get("/seed", async (req, res) => {
-  dbga("seed");
+
+  dbg.extend("seed");
+
   await User.deleteMany().exec();
   const users = [
     {
@@ -88,31 +92,56 @@ router.get("/seed", async (req, res) => {
 //*
 router.get("/check", async (req, res) => {
   const users = await User.find();
-  dbga("check", users);
-
   res.send(users);
 });
 
 //*
 router.post("/login", async (req, res) => {
+  dbg.extend("login")("req.body", req.body);
+  const failResponse = {
+    success: false,
+    message: "Invalid username or password",
+  };
   try {
-    const user = await User.getAuthenticated(req.body);
-    if (!user) return res.status(401).json({ message: "Invalid credentials" });
+    const user = await User.findOne({ username: req.body.username });
+    dbg.extend("login")("user", user);
+    if (!user) return res.status(401).json(failResponse);
 
-    const { username, accountType } = user;
-    const token = generateAccessToken({ username, accountType });
-    const [refreshToken, fgp] = generateRefreshToken();
+    const isMatch = user.comparePassword(req.body.password, (err, isMatch) => {
+      if (err)
+        return res
+          .status(500)
+          .json({ ...failResponse, message: "Error comparing passwords" });
+      if (!isMatch) return res.status(401).json(failResponse);
+    });
 
-    res
-      .status(200)
-      .cookie("__secure-fgp", fgp, {
-        domain: "localhost",
-        secure: true,
-        httpOnly: true,
-      })
-      .json({ token, refreshToken });
+    if (user && isMatch) {
+      const { username, accountType } = user;
+      const accessToken = generateAccessToken({ username });
+      const [refreshToken, fgp] = generateRefreshToken(username);
+      dbg.extend("login")("tokens", { accessToken, refreshToken, fgp });
+      return res
+        .status(200)
+        .cookie("__secure-fgp", fgp, {
+          httpOnly: true,
+          secure: true,
+          domain: "localhost",
+          signed: true,
+          maxAge: 1000 * 60 * 60 * 24 * 7,
+        })
+        .json({
+          success: true,
+          message: "Login successful",
+          token: accessToken,
+          refreshToken: refreshToken,
+        });
+    }
   } catch (error) {
-    res.status(500).json({ message: error });
+    dbg.extend("login")("error", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error logging in",
+    });
   }
 });
 
@@ -140,17 +169,7 @@ router.post("/signup", async (req, res) => {
     .json({ token, refreshToken });
 });
 
-router.get("/test", async (req, res) => {
-  const users = User.find({}).exec();
-  const listings = Listing.find({}).exec();
-
-  await Promise.all([users, listings]);
-
-  res.json({ users, listings });
-
-  // console.log(req);
-  // console.log("req.cookies", req.cookies);
-});
+router.get("/test", async (req, res) => {});
 
 //addfavourite
 // router.post("", (req, res) => {
