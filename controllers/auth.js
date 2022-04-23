@@ -1,6 +1,8 @@
 const express = require("express");
+
 // const { Listing } = require("../models/Listing");
 const { User } = require("../models/Users");
+
 
 const dbg = require("debug")("app:auth");
 
@@ -13,7 +15,9 @@ const {
 const router = express.Router();
 
 router.get("/seed", async (req, res) => {
+
   dbg.extend("seed");
+
   await User.deleteMany().exec();
   const users = [
     {
