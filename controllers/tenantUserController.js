@@ -92,6 +92,7 @@ router.post("/", async (req, res) => {
 
 
 router.put("/:id", async (req, res) => {
+  console.log('sent')
   const  {fav } = req.body;
   //_id shld be tagged to the logged in User
   const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
@@ -101,25 +102,41 @@ router.put("/:id", async (req, res) => {
   if(update ===null){
     console.log('mongo search is null')
   }//else //update.favourites =fav
-  
+  //res.send('Added to list')
+  res.json({ message: "Added to list" });
   //console.log('update',update)
-  await update.save()
+  //await update.save()
 })
 
-router.put("/:id", async (req, res) => {
-  const  {deleteFav } = req.body;
-  console.log(deleteFav)
+
+// router.delete("/:id", async (req, res) => {
+//   const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+//   await await TenantUser.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:deleteFav}})
+  
+//   res.json({ message: "Holiday Deleted" });
+// });
+
+
+router.put("/watchlist/:id", async (req, res) => {
+  const  {fav } = req.body;
+  console.log('deleteBody' , fav)
   //_id shld be tagged to the logged in User
-  const tenantID = "626256bdbd0702716c26976c"
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
   // const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$push: {favourites:fav}})
-  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:deleteFav}})
+  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:fav}})
+  //.then((listings) => {
+    // res.json(update);
+  //})
 
   if(update ===null){
     console.log('mongo search is null----pull')
   }//else //update.favourites =fav
   
-  console.log('update--pull',update)
-  await update.save()
+  //console.log('update--pull',update)
+  //await update.save()
+  // res.send('Deleted from list')
+  res.json({ message: "Deleted from list" });
+
 })
 
 
