@@ -1,5 +1,4 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable no-undef */
+
 require("dotenv").config();
 const express = require("express");
 
@@ -7,8 +6,9 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
-const AuthController = require("./controllers/auth");3
+const AuthController = require("./controllers/auth");
 const tenantUserController = require("./controllers/tenantUserController");
+const testUserController = require("./gwLogin/testLoginController")
 const morgan = require("morgan");
 const { isProduction, mongoUri, prodUrls, ports } = require("./util/envhelper");
 const morganFmt = isProduction ? "tiny" : "dev";
@@ -48,7 +48,8 @@ app
   .use(cookieParser())
   .use("/api/listings", ListingController)
   .use("/auth", AuthController)
-  .use("/api/tenant", tenantUserController);
+  .use("/api/tenant", tenantUserController)
+  .use("/api/testusers", testUserController)
 
 app.get("/", (req, res) => {
   res.send("Welcome to Reallistic");
