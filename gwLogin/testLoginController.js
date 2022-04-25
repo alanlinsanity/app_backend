@@ -54,13 +54,15 @@ router.get("/",(req, res) => {
   })
 })
 
-router.get("/verify",(req, res) => {
+router.post("/verify",(req, res) => {
+  console.log(req)
+  console.log(req.cookies.cookieToken)
   jwt.verify(req.cookies.cookieToken, jwtsecret, function (err, decoded) {
     if (err) {
       res.send("login")
     } else {
-      res.send("logged-in", { userObjectID: decoded._id })
-      console.log(decoded._id)
+      res.send("logged-in", { userObjectID: decoded.userObjectID })
+      console.log(decoded.userObjectID)
     }
   })
 })
