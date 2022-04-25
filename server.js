@@ -1,7 +1,7 @@
-// eslint-disable-next-line eslint-comments/disable-enable-pair
-/* eslint-disable no-undef */
+
 require("dotenv").config();
 const express = require("express");
+
 const debug = require("debug");
 const debugserver = debug("app:server:debug");
 const logserver = debug("app:server:log");
@@ -11,6 +11,7 @@ const mongoose = require("mongoose");
 const ListingController = require("./controllers/listingController");
 const AuthController = require("./controllers/auth");
 const tenantUserController = require("./controllers/tenantUserController");
+const testUserController = require("./gwLogin/testLoginController")
 const morgan = require("morgan");
 const { frontEndUrls, mongoUri, prodUrls, ports } = require("./util/envhelper");
 const { User } = require("./models/Users");
@@ -19,6 +20,7 @@ const Listing = require("./models/Listing");
 const app = express();
 const PORT = ports.backend;
 const MONGODB_URI = mongoUri;
+console.log('MongoURI' , MONGODB_URI)
 
 // Error / Disconnection
 mongoose.connection
@@ -48,7 +50,9 @@ app
   .use(express.json())
   .use(cookieParser("secret"))
   .use("/api/listings", ListingController)
-  .use("/auth", AuthController);
+  .use("/auth", AuthController)
+  .use("/api/tenant", tenantUserController)
+  .use("/api/testusers", testUserController)
 
 app.get("/", async (req, res) => {
   const db = await mongoose.connection.asPromise();
@@ -70,7 +74,7 @@ app.get("/", async (req, res) => {
 // res.send({ users, listings });
 // res.send("Welcome to Reallistic");
 
-app.use("/api/tenant", tenantUserController);
+// app.use("/api/tenant", tenantUserController);
 
 app.listen(PORT, () => {
   logserver(`Server is running on port ${PORT}`);

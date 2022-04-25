@@ -6,34 +6,11 @@ const router = express.Router();
 ////("/api/tenant", TenantController);
 
 //* Index Route
-router.get("/", (req, res) => {
-  res.send('you are at tenant space')
-    .catch((err) => {
-      res.json(err);
-    });
-});
-
-
-// //* Delete Route
-// router.delete("/:id", async (req, res) => {
-//   await Listing.findByIdAndRemove(req.params.id);
-//   res.json({ message: "Listing Deleted" });
-// });
-
-// router.get('/:id', (req, res) => {
-//   Listing.find({_id: req.params.id})
-//     .then(listing => {
-//       res.json(listing)
-//     })
-//     .catch(err => {
-//       res.json(err)
-//     })
-// })
-
-// //*Put route
-// router.put("/:id", async (req, res) => {
-//   await Listing.findByIdAndUpdate({_id:req.params.id}, req.body);
-//   res.json({ message: "Listing Updated" });
+// router.get("/", (req, res) => {
+//   res.send('you are at tenant space')
+//     .catch((err) => {
+//       res.json(err);
+//     });
 // });
 
 ////Seed Tenant Listings
@@ -43,17 +20,17 @@ router.get("/seed", async (req, res) => {
     { 
       username: "tenant-1",
       accountType: "renter",
-      favourites : " "    //[] lags
+      favourites : []    //[] lags
     },
     { 
       username: "tenant-2",
       accountType: "renter",
-      favourites : " "
+      favourites : []
     },
     { 
       username: "tenant-3",
       accountType: "renter",
-      favourites : " "
+      favourites : []
     },
  
   ];
@@ -63,7 +40,7 @@ router.get("/seed", async (req, res) => {
 });
 
 //* Index Route
-router.get("/listings", (req, res) => {
+router.get("/", (req, res) => {
   TenantUser.find()
     .then((listings) => {
       res.json(listings);
@@ -84,41 +61,37 @@ router.post("/", async (req, res) => {
   }
 });
 
-//*Put route
-// router.put("/:id", async (req, res) => {
-//   await TenantWatchList.findByIdAndUpdate({_id:req.params.id}, req.body);
-//   res.json({ message: "Listing Updated" });
-// });
-
-
-// router.put("/:id", async (req, res) => {
-//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
-//   console.log(req.body)
-//   res.json({ message: "Listing Updated" });
-// });
-
-// router.put("/:id", async (req, res) => {
-//   await TenantWatchList.findByIdAndUpdate({_id:"625ea35742bc0937b5cf24b9"}, req.body);
-//   console.log(req.body)
-//   res.json({ message: "Listing Updated" });
-// });
-
 router.put("/:id", async (req, res) => {
   const  {fav } = req.body;
-  // const update = await TenantWatchList.findById({_id:"625ee3e32c4ae8a2064d299a"});
-  // console.log('fav',fav)
-  // console.log('update',update)
-  // console.log('update.favourites',update.favourites)
-
   //_id shld be tagged to the logged in User
-  const update = await TenantUser.findByIdAndUpdate({_id:"62603024c55f82e765ede5e5"},{$push: {favourites:fav}})
-  
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{$addToSet: {favourites:fav}})
+
   if(update ===null){
     console.log('mongo search is null')
-  }//else //update.favourites =fav
+  }
+  //res.send('Added to list')
+  res.json({ message: "Added to list" });
+
+  //await update.save()
+})
+
+
+//Delete specific listing from favourites
+router.put("/watchlist/:id", async (req, res) => {
+  const  {fav } = req.body;
+  //console.log('deleteBody' , fav)
+  //_id shld be tagged to the logged in User
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await TenantUser.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:fav}})
+
+
+  if(update ===null){
+    console.log('mongo search is null----pull')
+  }
   
-  console.log('update',update)
-  await update.save()
+  res.json({ message: "Deleted from list" });
+
 })
 
 module.exports = router;

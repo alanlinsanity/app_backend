@@ -202,6 +202,7 @@ router.post("/", async (req, res) => {
 //* Delete Route
 router.delete("/:id", async (req, res) => {
   await Listing.findByIdAndRemove(req.params.id);
+  console.log('deleting', req.params)
   res.json({ message: "Listing Deleted" });
 });
 
