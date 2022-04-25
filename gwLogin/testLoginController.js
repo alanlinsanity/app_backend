@@ -23,46 +23,70 @@ router.use(cookieParser())
 
 const saltRounds = 10;
 router.get("/seed", async (req, res) => {
-    try {
-        await TestUsers.deleteMany({})
-        await TestUsers.create([
-          {
-            username: "rentername",
+
+        const testUsers = [
+          { 
+            username: "renter1",
             accountType: "renter",
-            password: bcrypt.hashSync("12345", saltRounds),
+            password: bcrypt.hashSync("11111", saltRounds),
+            favourites : []  
           },
-          {
-            username: "listername",
+          { 
+            username: "renter2",
+            accountType: "renter",
+            password: bcrypt.hashSync("22222", saltRounds),
+            favourites : []
+          },
+          { 
+            username: "lister1",
             accountType: "lister",
-            password: bcrypt.hashSync("88888", saltRounds),
+            password: bcrypt.hashSync("33333", saltRounds),
+            favourites : []
           },
-        ]);
-        res.send("Seed")
-      } catch (error) {
-          console.log(error);
-      }
-})
+          { 
+            username: "lister2",
+            accountType: "lister",
+            password: bcrypt.hashSync("44444", saltRounds),
+            favourites : []
+          },
+       
+        ];
+        await TestUsers.deleteMany({});
+        await TestUsers.insertMany(testUsers);
+        res.json(testUsers);
+      });
 
+// //* Index Route
+// router.get("/",(req, res) => {
+//   jwt.verify(req.cookies.cookieToken, jwtsecret, function (err, decoded) {
+//     if (err) {
+//       res.send("login")
+//     } else {
+//       res.json({ userObjectID: decoded._id })
+//     }
+//   })
+// })
 
-router.get("/",(req, res) => {
-  jwt.verify(req.cookies.cookieToken, jwtsecret, function (err, decoded) {
-    if (err) {
-      res.send("login")
-    } else {
-      res.json({ userObjectID: decoded._id })
-    }
-  })
-})
+router.get("/findList", (req, res) => {
+  TestUsers.find()
+    .then((listings) => {
+      res.json(listings);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+    
+});
+
 
 router.post("/verify",(req, res) => {
-  console.log(req)
-  console.log(req.cookies.cookieToken)
+  //console.log('cookieToken',req.cookies.cookieToken)
   jwt.verify(req.cookies.cookieToken, jwtsecret, function (err, decoded) {
     if (err) {
-      res.send("login")
+      // res.send("login")
     } else {
-      res.send("logged-in", { userObjectID: decoded.userObjectID })
-      console.log(decoded.userObjectID)
+      console.log('decoded>>>>',decoded.userObjectID)
+      res.json(decoded) //send back userID
     }
   })
 })
@@ -88,7 +112,7 @@ router.post("/login", async (req, res) => {
   if (!user) {
       res.send("User not found");
   } else if (bcrypt.compareSync(password, user.password)) {
-    res.cookie("cookieToken", jwt.sign({ userObjectID: user._id }, jwtsecret), { httpOnly: true })
+    res.cookie("cookieToken", jwt.sign({ userObjectID: user._id, name:user.username}, jwtsecret), { httpOnly: true })
     // req.session.user = user;
     // req.session.isLoggedIn = true; 
     // res.send("Ok");
@@ -101,9 +125,12 @@ router.post("/login", async (req, res) => {
 //* success or failure
 });
 
+//LOGOUT ROUTE
 router.get("/logout", (req, res) => {
+
   res.clearCookie("cookieToken")
-  res.redirect("/")
+  res.redirect("http://localhost:3000/")
+
 })
 
 // have a GET request that is token protected but doesnt need CSRF because it is not modifying any data
@@ -116,15 +143,6 @@ router.get("/ajax-example", mustBeLoggedIn, (req, res) => {
   res.json({ message: "Two plus two is four and grass is green." })
 })
 
-// // show the money transfer form
-// app.get("/transfer-money", csrfProtection, mustBeLoggedIn, (req, res) => {
-//   res.render("transfer-money-form", { csrf: req.csrfToken() })
-// })
-
-// // have a POST request that verifies token AND needs to be CSRF protected because it hypothetically modifies data
-// app.post("/transfer-money", csrfProtection, mustBeLoggedIn, (req, res) => {
-//   res.send("Thank you, we are working on processing your transaction.")
-// })
 
 // Our token checker middleware
 function mustBeLoggedIn(req, res, next) {
@@ -136,5 +154,50 @@ function mustBeLoggedIn(req, res, next) {
     }
   })
 }
+
+
+
+// //* Create Route
+// router.post("/", async (req, res) => {
+//   try {
+//     const createdListing = await TenantUser.create(req.body);
+//     res.status(200).send(createdListing);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
+router.put("/:id", async (req, res) => {
+  const  {fav } = req.body;
+  //_id shld be tagged to the logged in User
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await TestUsers.findByIdAndUpdate({_id:tenantID},{$addToSet: {favourites:fav}})
+
+  if(update ===null){
+    console.log('mongo search is null')
+  }
+  //res.send('Added to list')
+  res.json({ message: "Added to list" });
+
+  //await update.save()
+})
+
+
+//Delete specific listing from favourites
+router.put("/watchlist/:id", async (req, res) => {
+  const  {fav } = req.body;
+  //console.log('deleteBody' , fav)
+  //_id shld be tagged to the logged in User
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await TestUsers.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:fav}})
+
+
+  if(update ===null){
+    console.log('mongo search is null----pull')
+  }
+  
+  res.json({ message: "Deleted from list" });
+
+})
 
 module.exports = router;
