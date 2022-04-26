@@ -57,7 +57,7 @@ exports.User =
     void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const bcrypt = __importStar(require("bcrypt"));
-const accountTypes = ["admin", "lister", "owner", "agent", "renter"];
+const accountTypes = ["admin", "lister", "owner", "agent", "renter", "tenant"];
 function hash(stringToHash) {
   const saltRounds = 10;
   return bcrypt.hashSync(stringToHash, saltRounds);
@@ -97,18 +97,14 @@ const userSchema = new mongoose_1.default.Schema({
     type: String,
     enum: accountTypes,
   },
-  listings: {
-    type: [
-      {
-        type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: "Listing",
-      },
-    ],
-  },
+  listings: [
+    {
+      type: mongoose_1.default.Schema.Types.ObjectId,
+    },
+  ],
   favourites: [
     {
       type: mongoose_1.default.Schema.Types.ObjectId,
-      ref: "Listing",
     },
   ],
 });

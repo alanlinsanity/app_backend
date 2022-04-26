@@ -1,5 +1,6 @@
 const express = require("express");
 const Listing = require("../models/Listing");
+const { User } = require("../models/Users");
 const router = express.Router();
 
 router.get("/seed", async (req, res) => {
@@ -17,6 +18,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 2,
       description:
         "This is a well-furnished condominium called Hundred Trees that is just 500m away from Clementi MRT. Nearby amenities include Ayer Rajah Food Centre.",
+      lister: "alanthelister",
     },
     {
       postal: "750335",
@@ -31,6 +33,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 2,
       description:
         "HDB that is just 500m away from Sembawang MRT. Close to market and eateries. Sun Plaza and Sembawang Shopping Centre are just within 10 minutes commute away.",
+      lister: "morkthelister",
     },
     {
       postal: "099786",
@@ -45,6 +48,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "This is a Private development that is close to the city. 5 minutes walk to bus-stop. Nearest MRT is Harbourfront Interchange.",
+      lister: "guoweithelister",
     },
     {
       postal: "670471",
@@ -59,6 +63,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 2,
       description:
         "This is a well-furnished HDB that is just 500m away from Segar LRT. The nearest MRT is Bukit Panjang MRT where you can change to the Downtown Line.",
+      lister: "alanthelister",
     },
     {
       postal: "807065",
@@ -73,6 +78,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "This is a well-furnished Private Landed that is located in the Seletar Hills Estate. Greenwich V is an easily accessible mall for your daily groceries and f&b needs. Comes with 2 parking lots.",
+      lister: "morkthelister",
     },
     {
       postal: "459106",
@@ -87,6 +93,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "This is a recently renovated Shophouse that is located just beside Siglap V Shopping Centre. Tenants are able to enjoy a myriad of lifestyle choices ranging from european bars & bistros to local delights.",
+      lister: "guoweithelister",
     },
     {
       postal: "548315",
@@ -101,6 +108,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "Located in between Kovan & Hougang Estate. This landed house underwent refurbishment in 2010 and comes with a beautiful lift and pool. Parking for 2 cars.",
+      lister: "alanthelister",
     },
     {
       postal: "239199",
@@ -115,6 +123,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "This is an ultra-luxurious development located in the prime district 9. This development is just 5 minutes walk away from Somerset MRT and the Orchard Shopping Belt.",
+      lister: "morkthelister",
     },
     {
       postal: "098417",
@@ -129,6 +138,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 3,
       description:
         "If you love waterfront living, Reflections at Keppel Bay is the development for you. Not only are you living in an iconic development by a renowned architect, the development is also just 7 minutes walk to Vivo City and Harbourfront MRT Station.",
+      lister: "guoweithelister",
     },
     {
       postal: "090103",
@@ -143,6 +153,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 2,
       description:
         "This unique and quaint HDB is just a 5 minutes bus-ride away from the Central Business District. Moreover, you can enjoy coffeeshops and amenities located just down your block.",
+      lister: "alanthelister",
     },
     {
       postal: "570241",
@@ -157,6 +168,7 @@ router.get("/seed", async (req, res) => {
       no_of_bathrooms: 2,
       description:
         "This 5-Room HDB boasts a spectacular view of Bishan Park and has a Macdonalds located just 1 minute away. Tenants are able to commute to Bishan North Shopping Centre within 5 minutes stroll.",
+      lister: "morkthelister",
     },
     {
       postal: "141079",
@@ -165,14 +177,15 @@ router.get("/seed", async (req, res) => {
       property_type: "HDB",
       size: 904,
       price: 3300,
-      image:
-        "https://static.mothership.sg/1/2017/01/LowresPasirRis-06.jpg",
+      image: "https://static.mothership.sg/1/2017/01/LowresPasirRis-06.jpg",
       no_of_bedrooms: 3,
       no_of_bathrooms: 2,
       description:
         "This 4-Room HDB has special permission to rent before its 5 year MOP. Tastefully renovated by owners in 2020, this unit is just 5 minutes away from Queenstown MRT Station.",
-    } 
+      lister: "guoweithelister",
+    },
   ];
+
   await Listing.deleteMany({});
   await Listing.insertMany(listings);
   res.json(listings);
@@ -191,8 +204,14 @@ router.get("/", (req, res) => {
 
 //* Create Route
 router.post("/", async (req, res) => {
+  console.log("req.body", req.body);
   try {
     const createdListing = await Listing.create(req.body);
+    const lister = await User.findOne({ username: req.body.lister });
+
+    lister.listings.push(createdListing._id);
+    await lister.save();
+
     res.status(200).send(createdListing);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -202,7 +221,7 @@ router.post("/", async (req, res) => {
 //* Delete Route
 router.delete("/:id", async (req, res) => {
   await Listing.findByIdAndRemove(req.params.id);
-  console.log('deleting', req.params)
+  console.log("deleting", req.params);
   res.json({ message: "Listing Deleted" });
 });
 

@@ -25,13 +25,18 @@ router.get("/seed", async (req, res) => {
     },
     {
       username: "lister",
-      password: "lister312",
+      password: "lister123",
       accountType: "lister",
     },
     {
       username: "renter",
-      password: "renter321",
+      password: "renter123",
       accountType: "renter",
+    },
+    {
+      username: "tenant",
+      password: "tenant123",
+      accountType: "tenant",
     },
   ];
 
@@ -126,7 +131,8 @@ router.post("/login", async (req, res) => {
     });
 
     if (user && isMatch) {
-      const { _id, username, accountType } = user;
+      const { _id, username, accountType, favourites, listings } = user;
+      // const favs,
       const accessToken = generateAccessToken({ username });
       const [refreshToken, fgp] = generateRefreshToken(username);
       dbg.extend("login")("tokens", { accessToken, refreshToken, fgp });
@@ -148,6 +154,8 @@ router.post("/login", async (req, res) => {
             userId: _id,
             username,
             accountType,
+            favourites,
+            listings,
           },
         });
     }
@@ -163,11 +171,12 @@ router.post("/login", async (req, res) => {
 //* Create Route
 
 router.post("/signup", async (req, res) => {
+  console.log("req", req);
   try {
     const user = await User.findOne({ username: req.body.username });
     if (user) return res.status(400).json({ message: "User already exists" });
     const newUser = await User.create(req.body);
-    const { _id, username, accountType } = newUser;
+    const { _id, username, accountType, favourites, listings } = newUser;
     const accessToken = generateAccessToken({ username });
     const [refreshToken, fgp] = generateRefreshToken({ username });
     return res

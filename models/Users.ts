@@ -2,7 +2,14 @@ import * as mongoose from "mongoose";
 
 import * as bcrypt from "bcrypt";
 
-const accountTypes = ["admin", "lister", "owner", "agent", "renter"] as const;
+const accountTypes = [
+  "admin",
+  "lister",
+  "owner",
+  "agent",
+  "renter",
+  "tenant",
+] as const;
 
 interface IUser {
   username: string;
