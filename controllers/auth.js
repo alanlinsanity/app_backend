@@ -1,6 +1,7 @@
 const express = require("express");
+
 const Listing = require("../models/Listing");
-const User = require("../models/Users");
+const { User } = require("../models/Users");
 
 const dbg = require("debug")("app:auth");
 
@@ -132,6 +133,13 @@ router.post("/login", async (req, res) => {
 
     if (user && isMatch) {
       const { _id, username, accountType, favourites, listings } = user;
+
+      const userListings =
+        accountType === "admin"
+          ? await Listing.find()
+          : await Listing.find({ lister: username });
+      console.log("userListings", userListings);
+
       // const favs,
       const accessToken = generateAccessToken({ username });
       const [refreshToken, fgp] = generateRefreshToken(username);
@@ -155,7 +163,7 @@ router.post("/login", async (req, res) => {
             username,
             accountType,
             favourites,
-            listings,
+            listings: userListings,
           },
         });
     }
@@ -177,6 +185,10 @@ router.post("/signup", async (req, res) => {
     if (user) return res.status(400).json({ message: "User already exists" });
     const newUser = await User.create(req.body);
     const { _id, username, accountType, favourites, listings } = newUser;
+    const userListings =
+      accountType === "admin"
+        ? await Listing.find()
+        : await Listing.find({ lister: username });
     const accessToken = generateAccessToken({ username });
     const [refreshToken, fgp] = generateRefreshToken({ username });
     return res
