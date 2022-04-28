@@ -2,6 +2,7 @@ import type { SignOptions } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 import { accessSecret, refreshSecret } from "./envhelper";
 import crypto from "node:crypto";
+import { User } from "../models/Users";
 
 const expiry = {
   access: "15m",
@@ -53,7 +54,7 @@ const verifyAccessToken = (token) => {
   }
 };
 
-const accessTokenVerifier = (req, res, next) => {
+const accessTokenVerifier = async (req, res, next) => {
   const headers = req.headers;
   const { authorization } = headers;
 
@@ -63,7 +64,8 @@ const accessTokenVerifier = (req, res, next) => {
     const token = authorization.split(" ")[1];
     const userdata = verifyAccessToken(token);
     if (userdata) {
-      req.userdata = userdata;
+      const user = await User.findById(userdata._id).exec();
+      req.userdata = { ...userdata, accountType: user.accountType };
       next();
     } else {
       res.status(401).send("Unauthorized");

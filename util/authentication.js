@@ -7,6 +7,7 @@ exports.accessTokenVerifier = exports.verifyAccessToken = exports.verifyRefreshT
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const envhelper_1 = require("./envhelper");
 const node_crypto_1 = __importDefault(require("node:crypto"));
+const Users_1 = require("../models/Users");
 const expiry = {
     access: "15m",
     refresh: "1h",
@@ -51,7 +52,7 @@ const verifyAccessToken = (token) => {
     }
 };
 exports.verifyAccessToken = verifyAccessToken;
-const accessTokenVerifier = (req, res, next) => {
+const accessTokenVerifier = async (req, res, next) => {
     const headers = req.headers;
     const { authorization } = headers;
     console.log("req.headers", req.headers);
@@ -59,7 +60,8 @@ const accessTokenVerifier = (req, res, next) => {
         const token = authorization.split(" ")[1];
         const userdata = verifyAccessToken(token);
         if (userdata) {
-            req.userdata = userdata;
+            const user = await Users_1.User.findById(userdata._id).exec();
+            req.userdata = { ...userdata, accountType: user.accountType };
             next();
         }
         else {

@@ -204,11 +204,11 @@ router.get("/", (req, res) => {
 });
 
 router.get("/dash", accessTokenVerifier, async (req, res) => {
-  console.log("req.body", req.body);
-  console.log("req.userdata", req.userdata);
-  const { username, _id } = req.userdata;
-  const listings = await Listing.find({ lister: username }).exec();
-  console.log("listings", listings);
+  const { username, _id, accountType } = req.userdata;
+  const listings =
+    accountType === "admin"
+      ? await Listing.find().exec()
+      : await Listing.find({ lister: username }).exec();
   res.json(listings);
 });
 
@@ -228,21 +228,38 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get('/search', (req, res) => {
+router.get("/search", (req, res) => {
   const { postal, district, property_type, size, price } = req.query;
   console.log(postal, district, property_type, size, price);
   Listing.find({
     district: district,
     property_type: property_type,
-    size: {$gte: inputSize},
-    price: { $lte: inputMinPrice }
+    size: { $gte: inputSize },
+    price: { $lte: inputMinPrice },
   })
 
+    .then((listings) => {
+      res.json(listings);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+});
+
 //* Delete Route
-router.delete("/:id", async (req, res) => {
-  await Listing.findByIdAndRemove(req.params.id);
-  console.log("deleting", req.params);
-  res.json({ message: "Listing Deleted" });
+router.delete("/:id", accessTokenVerifier, async (req, res) => {
+  const { username, _id, accountType } = req.userdata;
+  const listing = await Listing.findById(req.params.id).exec();
+  if (accountType === "admin" || listing.lister === username) {
+    // await Listing.findByIdAndDelete(req.params.id);
+    const userListings = await User.findOne({
+      username: listing.lister,
+    }).exec();
+    userListings.listings.pull(req.params.id);
+    await userListings.save();
+    res.json({ message: "Listing deleted" });
+  }
+  // await Listing.findByIdAndRemove(req.params.id);
 });
 
 router.get("/:id", (req, res) => {
