@@ -23,6 +23,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
+    "@types/jsonwebtoken": "^8.5.8",
     "eslint": "^8.13.0",
     "eslint-config-prettier": "^8.5.0",
     "nodemon": "^2.0.15",

@@ -1,5 +1,8 @@
 require("dotenv").config();
 const express = require("express");
+const debug = require("debug");
+const debugserver = debug("app:server:debug");
+const logserver = debug("app:server:log");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const mongoose = require("mongoose");

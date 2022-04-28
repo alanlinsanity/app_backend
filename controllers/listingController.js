@@ -1,6 +1,7 @@
 const express = require("express");
 const Listing = require("../models/Listing");
 const { User } = require("../models/Users");
+const { accessTokenVerifier } = require("../util/authentication");
 const router = express.Router();
 
 router.get("/seed", async (req, res) => {
@@ -202,6 +203,15 @@ router.get("/", (req, res) => {
     });
 });
 
+router.get("/dash", accessTokenVerifier, async (req, res) => {
+  console.log("req.body", req.body);
+  console.log("req.userdata", req.userdata);
+  const { username, _id } = req.userdata;
+  const listings = await Listing.find({ lister: username }).exec();
+  console.log("listings", listings);
+  res.json(listings);
+});
+
 //* Create Route
 router.post("/", async (req, res) => {
   console.log("req.body", req.body);
@@ -217,6 +227,16 @@ router.post("/", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
+
+router.get('/search', (req, res) => {
+  const { postal, district, property_type, size, price } = req.query;
+  console.log(postal, district, property_type, size, price);
+  Listing.find({
+    district: district,
+    property_type: property_type,
+    size: {$gte: inputSize},
+    price: { $lte: inputMinPrice }
+  })
 
 //* Delete Route
 router.delete("/:id", async (req, res) => {
