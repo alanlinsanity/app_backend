@@ -35,7 +35,11 @@ for (const url in prodUrls) {
   }
 }
 
-frontEndUrls.push("https://reallistic-ah8b9whut-duguowei1000.vercel.app");
+frontEndUrls.push(
+  "https://reallistic-ah8b9whut-duguowei1000.vercel.app",
+  "https://reallistic-frontend-cdcivwck0-mork.vercel.app",
+  "https://reallistic-frontend.vercel.app"
+);
 
 module.exports = {
   mongoUri,
