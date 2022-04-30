@@ -203,7 +203,10 @@ router.post("/", async (req, res) => {
 //* Search Route
 router.post("/search", async (req, res) => {
 
-  const  {searchValue_min,searchValue_max,searchValue_HDBorPrivate,searchValue_Rooms, searchValue_Bathrooms } = req.body;
+  let  {searchValue_min,searchValue_max,searchValue_HDBorPrivate,searchValue_Rooms, searchValue_Bathrooms } = req.body;
+  if (searchValue_min >= searchValue_max){
+    searchValue_max = 9999
+  }
   console.log(`searchValue_min:${searchValue_min} searchValue_max:${searchValue_max} searchValue_HDBorPrivate: ${searchValue_HDBorPrivate} searchValue_Rooms${searchValue_Rooms}searchValue_Bathrooms:${searchValue_Bathrooms}`)
   try {
     // const filteredList = await Listing.find({})
@@ -274,7 +277,6 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [ 
-          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $eq:searchValue_Rooms }},
@@ -286,7 +288,6 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [ 
-          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5}},
@@ -312,7 +313,6 @@ router.post("/search", async (req, res) => {
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5 }},
-          {no_of_bathrooms:{ $eq:searchValue_Bathrooms }},
           
         ]
       });
@@ -324,8 +324,7 @@ router.post("/search", async (req, res) => {
           {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
-          {no_of_bedrooms:{ $gte:5 }},
-          {no_of_bathrooms:{ $eq:searchValue_Bathrooms }},
+          {no_of_bathrooms:{ $gte:5 }},
           
         ]
       });
