@@ -207,10 +207,11 @@ router.post("/search", async (req, res) => {
   console.log(`searchValue_min:${searchValue_min} searchValue_max:${searchValue_max} searchValue_HDBorPrivate: ${searchValue_HDBorPrivate} searchValue_Rooms${searchValue_Rooms}searchValue_Bathrooms:${searchValue_Bathrooms}`)
   try {
     // const filteredList = await Listing.find({})
-    if (searchValue_Rooms ==="Any" && searchValue_Bathrooms ==="Any" ){
+    
+    if (searchValue_Rooms ==="Any" && searchValue_Bathrooms ==="Any" && searchValue_HDBorPrivate ==="Any" ){
       const filteredList = await Listing.find(
         {$and: 
-        [
+        [ 
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
         ]
@@ -218,10 +219,96 @@ router.post("/search", async (req, res) => {
       });
       res.status(200).json(filteredList)
       console.log("filtered list>>>",filteredList)
+    }else if (searchValue_Rooms ==="More than 4 rooms" && searchValue_Bathrooms ==="Any" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bedrooms:{ $gte:5 }},
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Rooms ==="Any" && searchValue_Bathrooms ==="More than 4 rooms" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bathrooms:{ $gte:5 }},
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Rooms ==="More than 4 rooms" && searchValue_Bathrooms ==="More than 4 rooms" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bathrooms:{ $gte:5 }},
+          {no_of_bedrooms:{ $gte:5 }}
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Rooms ==="Any" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bathrooms:{ $eq:searchValue_Bathrooms }}
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Bathrooms ==="Any" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bedrooms:{ $eq:searchValue_Rooms }}
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Bathrooms ==="More than 4 rooms" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {property_type: searchValue_HDBorPrivate},
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bedrooms:{ $eq:searchValue_Rooms }},
+          {no_of_bathrooms:{ $gte:5 }},
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Rooms ==="More than 4 rooms" && searchValue_HDBorPrivate ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {property_type: searchValue_HDBorPrivate},
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bedrooms:{ $gte:5}},
+          {no_of_bathrooms:{ $eq:searchValue_Bathrooms }}
+        ]
+      });
+      res.status(200).json(filteredList)
+    }else if (searchValue_Rooms ==="Any" && searchValue_Bathrooms ==="Any"){
+      const filteredList = await Listing.find(
+        {$and: 
+        [ 
+          {property_type: searchValue_HDBorPrivate},
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+        ]
+      });
+      res.status(200).json(filteredList)
     }else if (searchValue_Rooms === "More than 4 rooms" && searchValue_Bathrooms ==="Any"){
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5 }},
@@ -234,6 +321,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5 }},
@@ -246,6 +334,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5 }},
@@ -253,10 +342,22 @@ router.post("/search", async (req, res) => {
         ]
       });
       res.status(200).json(filteredList)
+    }else if (searchValue_HDBorPrivate ==="Any" ){
+      const filteredList = await Listing.find(
+        {$and: 
+        [
+          {price:{$gt:searchValue_min || 0}},
+          {price:{$lt:searchValue_max || 9999}},
+          {no_of_bathrooms:{ $eq:searchValue_Bathrooms }},
+          {no_of_bedrooms:{ $eq:searchValue_Rooms }}
+        ]
+      });
+      res.status(200).json(filteredList)
     }else if (searchValue_Rooms ==="Any" ){
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bathrooms:{ $eq:searchValue_Bathrooms }},
@@ -267,6 +368,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $eq:searchValue_Rooms }},
@@ -277,6 +379,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $gte:5 }},
@@ -289,6 +392,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $eq:searchValue_Rooms }},
@@ -300,6 +404,7 @@ router.post("/search", async (req, res) => {
       const filteredList = await Listing.find(
         {$and: 
         [
+          {property_type: searchValue_HDBorPrivate},
           {price:{$gt:searchValue_min || 0}},
           {price:{$lt:searchValue_max || 9999}},
           {no_of_bedrooms:{ $eq:searchValue_Rooms }},
