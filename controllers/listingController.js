@@ -466,4 +466,16 @@ router.put("/:id", async (req, res) => {
 //   await listing.save();
 // });
 
+//Find ListS
+router.get("/findList", (req, res) => {
+  Listing.find()
+    .then((listings) => {
+      res.json(listings);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+    
+});
+
 module.exports = router;
