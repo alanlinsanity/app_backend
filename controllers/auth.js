@@ -237,6 +237,56 @@ router.get("/test", async (req, res) => {
   res.json({ cookie, headers });
 });
 
+
+
+
+
+//Add tenant favourites to list
+router.put("/:id", async (req, res) => {
+  const  {fav } = req.body;
+  //_id shld be tagged to the logged in User
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await User.findByIdAndUpdate({_id:tenantID},{$addToSet: {favourites:fav}})
+
+  if(update ===null){
+    console.log('mongo search is null')
+  }
+  //res.send('Added to list')
+  res.json({ message: "Added to list" });
+
+  //await update.save()
+})
+
+//Delete specific listing from favourites
+router.put("/watchlist/:id", async (req, res) => {
+  const  {fav } = req.body;
+  //console.log('deleteBody' , fav)
+  //_id shld be tagged to the logged in User
+  const tenantID = req.params.id//"6262c905f7d19a73f07ede29"
+  const update = await User.findByIdAndUpdate({_id:tenantID},{ $pull: {favourites:fav}})
+
+
+  if(update ===null){
+    console.log('mongo search is null----pull')
+  }
+  
+  res.json({ message: "Deleted from list" });
+
+})
+
+//Find ListS
+router.get("/findList", (req, res) => {
+  console.log('>>>find list' )
+  User.find()
+    .then((listings) => {
+      res.json(listings);
+    })
+    .catch((err) => {
+      res.json(err);
+    });
+    
+});
+
 //addfavourite
 // router.post("", (req, res) => {
 //   const { fav, user } = req.body;

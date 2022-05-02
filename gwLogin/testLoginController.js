@@ -96,6 +96,7 @@ router.get("http://localhost:3000/listings/all", mustBeLoggedIn,(req, res) => {
     if (err) {
       res.send("login")
     } else {
+      
       res.send("logged-in", { name: decoded.name })
     }
   })
@@ -148,7 +149,7 @@ router.get("/ajax-example", mustBeLoggedIn, (req, res) => {
 function mustBeLoggedIn(req, res, next) {
   jwt.verify(req.cookies.cookieToken, jwtsecret, function (err, decoded) {
     if (err) {
-      res.redirect("/")
+      res.redirect("http://localhost:3000/")
     } else {
       next()
     }
